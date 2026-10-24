@@ -14,10 +14,45 @@ Odd blocks are Scene and even blocks are Face
 Each block has study (n=16) and test(n=24) trials, AC trials only included in the testing phase
 
 
-Task flow:
+Workflow:
+Preprocessing using SPM 
+Realignment: Estimate and reslice, register to mean, 8 sessions x 188 frames; 6 motion parameters per run
+↓
+Coregistration:  T1w and functional image 1 from task run 1
+↓
+Segmentation: T1w segmentation; forward (and inverse) deformation fields
+↓
+Normalisation: Functional images written to MNI space at 1.7 mm
+References: 
+1. Andy’s Brain Book on SPM
+2. Principles of fMRI: https://www.youtube.com/@principlesoffmri6920
 
-dataset: HCP made available by Neuromatch
-Functional Activation & Contrast Analysis (GLM): ROI identification, statistical contrast maps to understand functional specialization across hemispheres and hemispheres-by-condition interactions.
-Static and Dynamic functional connectivity and Psychophysiological Interactions (PPI) assessing how the functional connectivity between a seed region and the rest of the brain is modulated by the experimental task conditions.
-Representational Similarity Analysis (RSA) 4.Connectome-based Predictive Modeling - CPM
-Represented the 360 parcels as nodes and their functional connectivity as edges.
+Data analysis with Nilearn in Python
+Motion QC: Framewise displacement (Power et al., 2012), summarised per run
+↓
+ROI time series: Schaefer 2018, 100 parcels; detrend, 128 s high-pass, z-score, motion regressors; per run
+↓
+First level GLM: Face and Scene, one event table per run
+↓
+Exploratory Ward Parcellation fitted on the functional data
+References:
+1. Handbook of Functional MRI (Poldrack et al)
+2. https://nilearn.github.io/stable/index.html
+
+Figures attached
+1. Schafer atlas overlay on mean functional image
+2. Schafer contours  on mean functional image
+3. Colourmap for visualisation
+4. Study Phase (Face - Scene, between runs)
+5. TImeseries : bold data and motion
+6. Ward parcellation
+
+Findings:
+Motion. Maximum framewise displacement per run ranged from 0.23 to 0.90 mm (the largest, in run 5, is a brief spike). Translation shows a slow, near-linear drift of about 2 mm along y within each run that resets at run boundaries. My interpretation is scanner drift rather than head movement, but I have not tested that. Motion parameters enter both the GLM and ROI extraction as confounds.
+
+First-level GLM, study phase: Face minus Scene. Study trials are modelled separately from test trials. The clearest effects are Scene > Face (blue) in posterior occipital cortex, with weaker Face > Scene (red) clusters in medial frontal and parietal regions. I did not see a clear face-selective fusiform effect. The map is shown at |z| > 3.1 (uncorrected, for display); peak |z| is about 8. Cluster locations are described by eye and have not been labelled against an atlas.
+
+Study phase: Face - Scene, between runs
+
+A control contrast on AC test trials (even runs minus odd runs) gave much weaker effects (peak |z| about 6, against about 33 for an earlier Face - Scene map pooling all trials). That argues against a general even-versus-odd run difference, but it does not separate category selectivity from low-level differences between the image sets.
+
