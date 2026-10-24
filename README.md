@@ -15,7 +15,7 @@ Each block has study (n=16) and test(n=24) trials, AC trials only included in th
 
 
 Workflow:
-Preprocessing using SPM 
+Preprocessing using SPM (standalone version 26.10.01)
 Realignment: Estimate and reslice, register to mean, 8 sessions x 188 frames; 6 motion parameters per run
 ↓
 Coregistration:  T1w and functional image 1 from task run 1
@@ -30,7 +30,7 @@ References:
 Data analysis with Nilearn in Python
 Motion QC: Framewise displacement (Power et al., 2012), summarised per run
 ↓
-ROI time series: Schaefer 2018, 100 parcels; detrend, 128 s high-pass, z-score, motion regressors; per run
+Atlas overlay: Schaefer 2018, 100 parcels; detrend, 128 s high-pass, z-score, motion regressors; per run
 ↓
 First level GLM: Face and Scene, one event table per run
 ↓
@@ -49,10 +49,16 @@ Figures attached
 
 Findings:
 Motion. Maximum framewise displacement per run ranged from 0.23 to 0.90 mm (the largest, in run 5, is a brief spike). Translation shows a slow, near-linear drift of about 2 mm along y within each run that resets at run boundaries. My interpretation is scanner drift rather than head movement, but I have not tested that. Motion parameters enter both the GLM and ROI extraction as confounds.
+First-level GLM, study phase: Face minus Scene, study trials only. Posterior occipital cortex show a Scene>Face effect (blue). Face selective FFA effect was not seen.
+The map is shown at |z| > 3.1 (uncorrected, for display); peak |z| is about 8. 
+Cluster locations are described by eye and have not been labelled against an atlas.
+A control contrast on AC test trials (even runs minus odd runs) gave much weaker effects (peak |z| about 6, against about 33 for an earlier Face - Scene map pooling all trials).
 
-First-level GLM, study phase: Face minus Scene. Study trials are modelled separately from test trials. The clearest effects are Scene > Face (blue) in posterior occipital cortex, with weaker Face > Scene (red) clusters in medial frontal and parietal regions. I did not see a clear face-selective fusiform effect. The map is shown at |z| > 3.1 (uncorrected, for display); peak |z| is about 8. Cluster locations are described by eye and have not been labelled against an atlas.
-
-Study phase: Face - Scene, between runs
-
-A control contrast on AC test trials (even runs minus odd runs) gave much weaker effects (peak |z| about 6, against about 33 for an earlier Face - Scene map pooling all trials). That argues against a general even-versus-odd run difference, but it does not separate category selectivity from low-level differences between the image sets.
+Limitations: 
+1. Single subject design
+2. Between run contrast confounded by differing factors like drift, motion, fatigue, scanner state
+3. Runs are combined as fixed effects, so z-values reflect within-run noise only and are inflated relative to a proper random-effects analysis.
+4. Figures use an uncorrected display threshold, not corrected inference.
+5. Field of view obscure basal structures like ITL and cerebrum.
+6. Github copilot was used for debugging code
 
